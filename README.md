@@ -4,7 +4,9 @@ Um sistema em NodeJs/ReactJs para controle de inventário e empréstimo de texto
 # Sobre o Mongo
 Usei o serviço do mongodb.com: conta grátis com 500MB de espaço. Configuração super simples: coloca o aqrquivo .evn e coloca nele as informaçõe que o serviço te fornecer em 
 Clusters>Connect>Connect you application>:
-DB_NAME=<seu usuario>
-DB_PASSW=<sua senha>
+<br />
+DB_NAME=
+<br />
+DB_PASSW=
 
 # Up the irons!
