@@ -12,19 +12,20 @@ html, body, #root{
 }
 
 body {
-  background: rgb(163, 245, 170) url('./assets/pastel.jpeg') no-repeat;
+  background: rgb(243, 242, 240) url('./assets/biblio.jpeg') no-repeat;
   background-size: cover;
-  align-self: auto;
+  align-self: center;
 }
 
 body, input, button {
   font-family: 'Patua', Arial, Helvetica, sans-serif;
   font-size: 14px;
+  -webkit-font-smoothing: antialiased !important;
 }
 
 .contenedor {
   margin: 80px auto 0;
-  max-width: 600px;
+  max-width: 650px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -32,16 +33,23 @@ body, input, button {
 }
 
 .conteudo {
-  width: 100%;
+  width: 87%;
   background: #fff;
   margin-top: 50px;
+  margin-bottom: 60px;
   border-radius: 5px;
   padding: 30px;
 }
 
-.conteudo > p {
+.conteudo > p.big {
   font-size: 20px;
   line-height: 30px;
+  margin-bottom: 30px;
+}
+
+.conteudo > p.little {
+  font-size: 13px;
+  line-height: 22px;
   margin-bottom: 30px;
 }
 
@@ -53,7 +61,7 @@ body, input, button {
 .conteudo label {
   font-size: 14px;
   font-weight: bold;
-  color: #444444;
+  color: #5e5d5d;
   margin-bottom: 8px;
 }
 
@@ -75,11 +83,11 @@ body, input, button {
   padding: 0 20px;
   font-size: 16px;
   font-weight: bold;
-  background: #ff0055;
+  background: #003cff;
   color: #fff;
   cursor: pointer;
 }
 
 .conteudo button.btn:hover {
-  background: #d6083f;
+  background: #4608d6;
 }
