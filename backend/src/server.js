@@ -6,11 +6,12 @@ const port = 3456;
 
 const app = express();
 
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
 dotenv.config();
 
 mongoose.connect('mongodb+srv://' + process.env.DB_NAME + ':' + process.env.DB_PASSW + '@primocluster-37ks4.mongodb.net/txtsCA?retryWrites=true&w=majority', {
     useNewUrlParser: true,
+    useCreateIndex: true,
     useUnifiedTopology: true,
 });
 
