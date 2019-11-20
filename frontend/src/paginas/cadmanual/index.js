@@ -22,7 +22,7 @@ export default function CadManual({ history }) {
         localStorage.setItem('user', _id);
         console.log(_id);
 
-        history.push('/perfil');
+        // history.push('/check');
     }
 
     return (

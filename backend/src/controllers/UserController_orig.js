@@ -1,21 +1,19 @@
+// https://codemoto.io/coding/nodejs/email-verification-node-express-mongodb
+
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const Token = require('../models/Token');
 const User = require('../models/User');
 
 module.exports = {
-    async store (req,res) {
-        const email = req.body.email;
-        
-        let user = await User.findOne ({ email });
-      
-        if (user) {
-            console.log('Esse email já era, use outro.')
-        };
-      
-        if (!user) {
-                user = new User({ 
-                nome: req.body.nome,
+    async store (req, res) {
+        // Não funfa a descoberta de email anteriores
+        await User.findOne({ email: req.body.email }, function (user) {
+
+            if (user) return res.status(400).send({ msg: 'Esse email já era, use outro.' });
+
+            user = new User({ 
+                nome: req.body.nome, 
                 ra: '',
                 email: req.body.email, 
                 telefone: req.body.telefone,
@@ -62,39 +60,35 @@ module.exports = {
                     });
                 });
             });
-              
+        
             return res.json(user);
-        }
+        });
     },
 
     async confirmationPost (req, res) {
         // Localiza o token
         await Token.findOne({ token: req.body.token }, function (token) {
-            if (!token) return res.status(),
-            console.log(token),
-            console.log('Não achamos seu token de verificação, talvez ele tenha expirado.'),
+            if (!token) return res.status(400).send({ 
+                type: 'not-verified', msg: 'Não achamaos seu número de verificação, talvez ele tenha expirado.' 
+            });
      
             // Depois de achar o token, acha o usuário
-            User.findOne({ _id: token._userId, token: req.body.token }, function (err, user) {
+            User.findOne({ _id: token._userId, email: req.body.email }, function (err, user) {
 
-                if (!user) return res.status(400).send(body),
-                    console.log('Não achamos o usuário desse token.');
-                
+                if (!user) return res.status(400).send({ 
+                    msg: 'Não achamos o usuário desse token.' 
+                });
                 if (user.isVerified) return res.status(400).send({ 
                     type: 'already-verified', msg: 'Esse usuário já foi verificado.' 
-                    },
-                    console.log('Esse usuário já foi verificado.')
-                );
+                });
      
                 // Verifica e salva o caboclo
                 user.isVerified = true;
                 user.save(function (err) {
                     if (err) { return res.status(500).send({ msg: err.message }); }
                     res.status(200).send("Conta verificada!. Agora é só logar.");
-                    },
-                    console.log('Conta verificada!. Agora é só logar.')
-                );
+                });
             });
-        });
+        })
     }
 }
