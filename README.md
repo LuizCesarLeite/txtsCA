@@ -10,7 +10,9 @@ DB_NAME=
 DB_PASSW=
 
 Também usei o Sendgrid pra servir os disparos para o Nodemailer:
+<br />
 MAIL_NOME=
+<br />
 MAIL_SENHA=
 
 
