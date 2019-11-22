@@ -7,16 +7,16 @@ export default function Check({ history }) {
 
     async function confirmationPost (event) {
         event.preventDefault();
-        
+
         const response =  await api.post('/confirma', {
-            token: token,
+            token: token.trim(),
         })
     
         const nToken  = response.data.token;
         console.log(nToken);
         console.log('Funfaaaaa');
 
-        // history.push('/perfil');
+        history.push('/perfil');
     }
 
     return (

@@ -14,7 +14,7 @@ module.exports = {
         };
       
         if (!user) {
-                user = new User({ 
+            user = new User({ 
                 nome: req.body.nome,
                 ra: '',
                 email: req.body.email, 
@@ -24,7 +24,8 @@ module.exports = {
             });
 
             user.save(function (err) {
-                if (err) { return res.status(500).send({
+                if (err) { 
+                    return res.status(500).send({
                         msg: err.message 
                     }); 
                 }
@@ -37,11 +38,19 @@ module.exports = {
 
                 // Salva o token de verificação
                 token.save(function (err) {
-                    if (err) { return res.status(500).send({ msg: err.message }); }
+                    if (err) { 
+                        return res.status(500).send({ 
+                            msg: err.message 
+                        }); 
+                    }
 
                     // Manda email
                     var transporter = nodemailer.createTransport({ 
-                        service: 'Sendgrid', auth: { user: process.env.MAIL_NOME, pass: process.env.MAIL_SENHA } 
+                        service: 'Sendgrid', 
+                        auth: { 
+                            user: process.env.MAIL_NOME, 
+                            pass: process.env.MAIL_SENHA 
+                        } 
                     });
                     
                     var mailOptions = { 
@@ -49,7 +58,7 @@ module.exports = {
                         to: user.email, 
                         subject: 'Verificação de seu email no txtCAs', 
                         // text: 'Olá,\n\n' + 'Por favor, habilite sua conta no txtCAs clicando nesse link: \nhttp:\/\/' + req.headers.host + '\/confirma\/' + token.token + '.\n' 
-                        text: 'Olá,\n\n' + 'Por favor, habilite sua conta no txtCAs clicando nesse link: \nhttp://localhost:3000/confirma\/' + token.token + '.\n' 
+                        text: 'Olá,\n\n' + 'Por favor, habilite sua conta no txtCAs copiando e colando este codigo [ ' + token.token + ' ].' 
                     };
 
                     transporter.sendMail(mailOptions, function (err) {
@@ -60,46 +69,61 @@ module.exports = {
                             'Um email de verificação foi mandado para ' + user.email + ', confere lá.'
                         );
                     });
-                });
-            });
+                }); //token.save
+            }); //user.save
               
             return res.json(user);
-        }
+        } //if (!user)
     },
 
     async confirmationPost (req, res) {
         // Localiza o token
-        const token = req.body.token;
-        await Token.findOne({ token:token }, function (token) {
-            if (!token) {
-                return res.status(),
-                console.log(req.body.token),
-                console.log('Não achamos seu token de verificação, talvez ele tenha expirado.')
+        const token_ = req.body.token;
+        const userAchado = null;
+        await Token.findOne({ token:token_ }, function (err, tokenData) {
+            if(err){
+                res.status(500).send;
+            }
+
+            if (!tokenData) {
+                console.log("req.body.token:[" + token_ +"]");
+                const msgErr = 'Não achamos seu token de verificação ['+ token_ +'], talvez ele tenha expirado.';
+                console.log(msgErr);  
+                return res.status(404).send(msgErr);
             }
             else 
             {     
                 // Depois de achar o token, acha o usuário
-                User.findOne({ _id: token._userId, token: req.body.token }, function (err, user) {
+                User.findOne({ _id: tokenData._userId }, function (err, user) {
 
-                    if (!user) return res.status(400).send(body),
+                    if (!user) {
                         console.log('Não achamos o usuário desse token.');
-                    
-                    if (user.isVerified) return res.status(400).send({ 
-                        type: 'already-verified', msg: 'Esse usuário já foi verificado.' 
-                        },
+                        return res.status(400).send(body);
+                    }
+
+                    userAchado = user;
+                    if (user.isVerified) {
                         console.log('Esse usuário já foi verificado.')
-                    );
-        
-                    // Verifica e salva o caboclo
-                    user.isVerified = true;
-                    user.save(function (err) {
-                        if (err) { return res.status(500).send({ msg: err.message }); }
-                        res.status(200).send("Conta verificada!. Agora é só logar.");
-                        },
-                        console.log('Conta verificada!. Agora é só logar.')
-                    );
+                        return res.status(400).send({ 
+                            type: 'already-verified', 
+                            msg: 'Esse usuário já foi verificado.' 
+                        });
+                    }
                 });
-            }
-        });
-    }
+        
+                // Verifica e salva o caboclo
+                userAchado.isVerified = true;
+                userAchado.save(function (err) {
+                    if (err) { 
+                        return res.status(500).send({ 
+                            msg: err.message 
+                        }); 
+                    }
+                    const msgOk = 'Conta verificada!. Agora é só logar.';
+                    console.log(msgOk);
+                    res.status(200).send(msgOk);
+                });
+            } //else if (!tokenData)
+        }); //await Token.findOne
+    } //async confirmationPost
 }

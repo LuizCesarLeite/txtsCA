@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   foto: String,
   roles: [{ type: 'String' }],
-  taVerificad: { type: Boolean, default: false },
+  isVerified: { type: Boolean, default: false },
   senha: String,
   senhaResetToken: String,
   senhaResetExpires: Date
