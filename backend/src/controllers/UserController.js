@@ -93,8 +93,9 @@ module.exports = {
             }
             else 
             {     
+                const user_id =  tokenData._userId;
                 // Depois de achar o token, acha o usuário
-                User.findOne({ _id: tokenData._userId }, function (err, user) {
+                User.findOne({ _id: user_id }, function (err, user) {
 
                     if (!user) {
                         console.log('Não achamos o usuário desse token.');
