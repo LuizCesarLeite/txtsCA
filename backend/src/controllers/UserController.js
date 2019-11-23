@@ -79,37 +79,35 @@ module.exports = {
     async confirmationPost (req, res) {
         // Localiza o token
         const token_ = req.body.token;
-        var userAchado = null;
+
         await Token.findOne({ token:token_ }, function (err, tokenData) {
-            if(err){
-                res.status(500).send;
-            }
-
             if (!tokenData) {
-                console.log("req.body.token:[" + token_ +"]");
-                const msgErr = 'Não achamos seu token de verificação ['+ token_ +'], talvez ele tenha expirado.';
-                console.log(msgErr);  
-                return res.status(404).send(msgErr);
+                return res.status(),
+                console.log('Não achamos seu token de verificação, talvez ele tenha expirado.')
             }
-            else 
+            else   // { type: mongoose.Schema.Types.ObjectId._userID, ref: 'Token' }
             {     
-                const user_id =  tokenData._userId;
-                // Depois de achar o token, acha o usuário
-                User.findOne({ _id: user_id }, function (err, user) {
 
-                    if (!user) {
+                tokenUser = tokenData._userId;
+                User.findOne({ _id: tokenUser }, function (err, user) {
+
+                    if (!user) return res.status(400),
                         console.log('Não achamos o usuário desse token.');
-                        return res.status(400).send(body);
-                    }
-
-                    userAchado = user;
-                    if (user.isVerified) {
-                        console.log('Esse usuário já foi verificado.')
-                        return res.status(400).send({ 
-                            type: 'already-verified', 
-                            msg: 'Esse usuário já foi verificado.' 
-                        });
-                    }
+                    
+                    if (user.isVerified) return res.status(400).send({ 
+                        type: 'already-verified', msg: 'Esse usuário já foi verificado.' 
+                        },
+                        console.log('Esse usuário já foi verificado.'),
+                    );
+        
+                    // Verifica o status do token e salva esse caboclo
+                    user.taVerificad = true;
+                    user.save(function (err) {
+                        if (err) { return res.status(500).send({ msg: err.message }); }
+                        res.status(200).send("Conta verificada!. Agora é só logar.");
+                        },
+                        console.log('Conta verificada! Agora é só logar.')
+                    );
                 });
         
                 // Verifica e salva o caboclo
