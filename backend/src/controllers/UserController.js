@@ -69,34 +69,33 @@ module.exports = {
 
     async confirmationPost (req, res) {
         // Localiza o token
-        const token = req.body.token;
-        await Token.findOne({ token:token }, function (token) {
-            if (!token) {
+        const token_ = req.body.token;
+        await Token.findOne({ token:token_ }, function (err, tokenData) {
+            if (!tokenData) {
                 return res.status(),
-                console.log(req.body.token),
                 console.log('Não achamos seu token de verificação, talvez ele tenha expirado.')
             }
-            else 
+            else   // { type: mongoose.Schema.Types.ObjectId._userID, ref: 'Token' }
             {     
-                // Depois de achar o token, acha o usuário
-                User.findOne({ _id: token._userId, token: req.body.token }, function (err, user) {
+                tokenUser = tokenData._userId;
+                User.findOne({ _id: tokenUser }, function (err, user) {
 
-                    if (!user) return res.status(400).send(body),
+                    if (!user) return res.status(400),
                         console.log('Não achamos o usuário desse token.');
                     
                     if (user.isVerified) return res.status(400).send({ 
                         type: 'already-verified', msg: 'Esse usuário já foi verificado.' 
                         },
-                        console.log('Esse usuário já foi verificado.')
+                        console.log('Esse usuário já foi verificado.'),
                     );
         
-                    // Verifica e salva o caboclo
-                    user.isVerified = true;
+                    // Verifica o status do token e salva esse caboclo
+                    user.taVerificad = true;
                     user.save(function (err) {
                         if (err) { return res.status(500).send({ msg: err.message }); }
                         res.status(200).send("Conta verificada!. Agora é só logar.");
                         },
-                        console.log('Conta verificada!. Agora é só logar.')
+                        console.log('Conta verificada! Agora é só logar.')
                     );
                 });
             }

@@ -9,7 +9,7 @@ export default function Check({ history }) {
         event.preventDefault();
         
         const response =  await api.post('/confirma', {
-            token: token,
+            token: token.trim(),
         })
     
         const nToken  = response.data.token;
