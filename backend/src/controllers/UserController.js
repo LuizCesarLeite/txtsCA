@@ -79,7 +79,7 @@ module.exports = {
     async confirmationPost (req, res) {
         // Localiza o token
         const token_ = req.body.token;
-        const userAchado = null;
+        var userAchado = null;
         await Token.findOne({ token:token_ }, function (err, tokenData) {
             if(err){
                 res.status(500).send;
@@ -113,17 +113,19 @@ module.exports = {
                 });
         
                 // Verifica e salva o caboclo
-                userAchado.isVerified = true;
-                userAchado.save(function (err) {
-                    if (err) { 
-                        return res.status(500).send({ 
-                            msg: err.message 
-                        }); 
-                    }
-                    const msgOk = 'Conta verificada!. Agora é só logar.';
-                    console.log(msgOk);
-                    res.status(200).send(msgOk);
-                });
+                if(userAchado){
+                    userAchado.isVerified = true;
+                    userAchado.save(function (err) {
+                        if (err) { 
+                            return res.status(500).send({ 
+                                msg: err.message 
+                            }); 
+                        }
+                        const msgOk = 'Conta verificada!. Agora é só logar.';
+                        console.log(msgOk);
+                        res.status(200).send(msgOk);
+                    });
+                }
             } //else if (!tokenData)
         }); //await Token.findOne
     } //async confirmationPost
